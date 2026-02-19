@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:confetti/confetti.dart';
 
 void main() {
   runApp(const DiceApp());
@@ -34,6 +35,10 @@ class _DiceHomePageState extends State<DiceHomePage> {
     setState(() {
       diceNumber1 = random.nextInt(6) + 1;
       diceNumber2 = random.nextInt(6) + 1;
+
+      if (diceNumber1 + diceNumber2 == 7) { 
+        _confettiController.play(); 
+      }
     });
   }
 
@@ -43,6 +48,21 @@ class _DiceHomePageState extends State<DiceHomePage> {
       diceNumber2 = 1;
     });
   }
+
+  late ConfettiController _confettiController;
+
+@override
+void initState() {
+  super.initState();
+  _confettiController = ConfettiController(duration: const Duration(seconds: 2));
+}
+
+@override
+void dispose() {
+  _confettiController.dispose();
+  super.dispose();
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -71,8 +91,17 @@ class _DiceHomePageState extends State<DiceHomePage> {
             ),
             const SizedBox(height: 30),
             Text(
-              'You rolled: ${diceNumber1 + diceNumber2}',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              (diceNumber1 + diceNumber2) == 7 ? 
+                'YOU HIT THE JACKPOT!!!' 
+                : 'You Rolled: ${diceNumber1 + diceNumber2}',
+
+              style: TextStyle(
+                fontSize: 24, 
+                fontWeight: FontWeight.bold,
+                color: (diceNumber1 + diceNumber2) < 6 ? Colors.red : 
+                (diceNumber1 + diceNumber2) > 6 ? Colors.blue : 
+                Colors.yellow,
+              ),
             ),
             const SizedBox(height: 30),
             
@@ -92,6 +121,7 @@ class _DiceHomePageState extends State<DiceHomePage> {
             ),
           ],
         ),
+        
       ),
     );
   }
